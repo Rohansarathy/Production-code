@@ -1,0 +1,1704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.1.1 (Python 3.11.8 on win32)" generated="20241203 15:10:01.678" rpa="true" schemaversion="4">
+<suite id="s1" name="COX BGV DT Initiation Main" source="C:\Users\Administrator\OneDrive - ITG Communications, LLC\onboarding_data\Onboarding_COX\COX_BGV_DT_Initiation\COX_BGV_DT_Initiation_Main.robot">
+<test id="s1-t1" name="Process" line="29">
+<kw name="DT&amp;BGV_Initiation">
+<kw name="Load JSON from file" library="RPA.JSON">
+<var>${credentials}</var>
+<arg>Infomart.json</arg>
+<doc>Load JSON data from a file, and return it as JSON serializable object.
+Depending on the input file the object can be either a dictionary,
+a list, or a scalar value.</doc>
+<msg timestamp="20241203 15:10:05.875" level="INFO">Loading JSON from file: Infomart.json</msg>
+<msg timestamp="20241203 15:10:05.875" level="INFO">${credentials} = {'InfomartURL': 'https://webasap.infomart-usa.net/?id=116815941', 'username': 'Ybot', 'password': 'Infomart06!', 'Account_Number': '101120863', 'FuseURL': 'https://fuse.i-t-g.net/login.php', 'Fusernam...</msg>
+<status status="PASS" starttime="20241203 15:10:05.875" endtime="20241203 15:10:05.875"/>
+</kw>
+<kw name="Connect To Database" library="DatabaseLibrary">
+<arg>psycopg2</arg>
+<arg>${credentials}[DB_NAME]</arg>
+<arg>${credentials}[DB_USERNAME]</arg>
+<arg>${credentials}[DB_PASSWORD]</arg>
+<arg>${credentials}[DB_HOST]</arg>
+<arg>${credentials}[DB_PORT]</arg>
+<doc>Loads the DB API 2.0 module given ``dbapiModuleName`` then uses it to
+connect to the database using provided parameters such as ``dbName``, ``dbUsername``, and ``dbPassword``.</doc>
+<msg timestamp="20241203 15:10:05.897" level="INFO">Connecting using : psycopg2.connect(database=onboardingdb, user=postgres, password=***, host=onboarding-app-db.cluster-cesmhx7exvaw.us-east-2.rds.amazonaws.com, port=5432)</msg>
+<status status="PASS" starttime="20241203 15:10:05.875" endtime="20241203 15:10:05.944"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>DB Connected</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20241203 15:10:05.944" endtime="20241203 15:10:05.944"/>
+</kw>
+<kw name="Query" library="DatabaseLibrary">
+<var>${result}</var>
+<arg>SELECT * FROM public.cox_onboarding where status is Null OR status = '' LIMIT 1;</arg>
+<doc>Runs a query with the ``selectStatement`` and returns the result as a list of rows.
+The type of row values depends on the database module -
+usually they are tuples or tuple-like objects.</doc>
+<msg timestamp="20241203 15:10:05.944" level="INFO">Executing : Query  |  SELECT * FROM public.cox_onboarding where status is Null OR status = '' LIMIT 1; </msg>
+<msg timestamp="20241203 15:10:05.960" level="INFO">${result} = []</msg>
+<status status="PASS" starttime="20241203 15:10:05.944" endtime="20241203 15:10:05.960"/>
+</kw>
+<for flavor="IN">
+<var>${row}</var>
+<value>@{result}</value>
+<iter>
+<var name="${row}"/>
+<kw name="Get Time" library="BuiltIn">
+<var>${Time}</var>
+<doc>Returns the given time in the requested format.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${year}</var>
+<arg>${Time}[0:4]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${month}</var>
+<arg>${Time}[5:7]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${day}</var>
+<arg>${Time}[8:10]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${mint}</var>
+<arg>${Time}[11:13]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Sec}</var>
+<arg>${Time}[14:16]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Log}</var>
+<arg>${credentials}[Logfile]\\DT&amp;BGV_${day}${month}${year}_${mint}_${Sec}.txt</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Create File" library="OperatingSystem">
+<arg>${Log}</arg>
+<doc>Creates a file with the given content and encoding.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<try>
+<branch type="TRY">
+<kw name="Log To Console" library="BuiltIn">
+<arg>*********************************Executing the Process*********************************</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>*********************************Executing the Process*********************************\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Infomart_Login" library="Infomart_login">
+<var>${InfomartLogin}</var>
+<arg>${credentials}</arg>
+<arg>${Log}</arg>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Fuse Login" library="Fuselogin">
+<var>${FuseLogin}</var>
+<arg>${credentials}</arg>
+<arg>${Log}</arg>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<if>
+<branch type="IF" condition="${InfomartLogin} == True and ${FuseLogin} == True">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Connecting DB.....</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>DB Connected\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Query" library="DatabaseLibrary">
+<var>${columns}</var>
+<arg>SELECT column_name FROM information_schema.columns WHERE table_name = 'cox_onboarding' AND table_schema = 'public'</arg>
+<doc>Runs a query with the ``selectStatement`` and returns the result as a list of rows.
+The type of row values depends on the database module -
+usually they are tuples or tuple-like objects.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Create List" library="BuiltIn">
+<var>@{column_names}</var>
+<doc>Returns a list containing given items.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<for flavor="IN">
+<var>${col}</var>
+<value>@{columns}</value>
+<iter>
+<var name="${col}"/>
+<kw name="Append To List" library="Collections">
+<arg>${column_names}</arg>
+<arg>${col}[0]</arg>
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</iter>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</for>
+<kw name="Query" library="DatabaseLibrary">
+<var>${result}</var>
+<arg>SELECT * FROM public.cox_onboarding where status is Null OR status = '' LIMIT 2;</arg>
+<doc>Runs a query with the ``selectStatement`` and returns the result as a list of rows.
+The type of row values depends on the database module -
+usually they are tuples or tuple-like objects.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<for flavor="IN">
+<var>${row}</var>
+<value>@{result}</value>
+<iter>
+<var name="${row}"/>
+<kw name="Create Dictionary" library="BuiltIn">
+<var>${Alldatas}</var>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<kw name="Get Length" library="BuiltIn">
+<var>${num_columns}</var>
+<arg>${column_names}</arg>
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<for flavor="IN RANGE">
+<var>${i}</var>
+<value>${num_columns}</value>
+<iter>
+<var name="${i}"/>
+<kw name="Set To Dictionary" library="Collections">
+<arg>${Alldatas}</arg>
+<arg>${column_names}[${i}]</arg>
+<arg>${row}[${i}]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</iter>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.960"/>
+</for>
+<kw name="Convert To String" library="BuiltIn">
+<var>${Tech_DOB}</var>
+<arg>${Alldatas}[tech_dob]</arg>
+<doc>Converts the given item to a Unicode string.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Split String" library="String">
+<var>${date_components}</var>
+<arg>${Tech_DOB}</arg>
+<arg>-</arg>
+<doc>Splits the ``string`` using ``separator`` as a delimiter string.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Get From List" library="Collections">
+<var>${DOBYear}</var>
+<arg>${date_components}</arg>
+<arg>0</arg>
+<doc>Returns the value specified with an ``index`` from ``list``.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Get From List" library="Collections">
+<var>${DOBMonth}</var>
+<arg>${date_components}</arg>
+<arg>1</arg>
+<doc>Returns the value specified with an ``index`` from ``list``.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Get From List" library="Collections">
+<var>${DOBDay}</var>
+<arg>${date_components}</arg>
+<arg>2</arg>
+<doc>Returns the value specified with an ``index`` from ``list``.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${DOB}</var>
+<arg>${DOBDay}${DOBMonth}${DOBYear}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${FIRST_NAME}</var>
+<arg>${Alldatas}[first_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${LAST_NAME}</var>
+<arg>${Alldatas}[last_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Split String" library="String">
+<var>${first_name_words}</var>
+<arg>${FIRST_NAME}</arg>
+<doc>Splits the ``string`` using ``separator`` as a delimiter string.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Split String" library="String">
+<var>${last_name_words}</var>
+<arg>${LAST_NAME}</arg>
+<doc>Splits the ``string`` using ``separator`` as a delimiter string.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Firstname}</var>
+<arg>${EMPTY}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Lastname}</var>
+<arg>${EMPTY}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<for flavor="IN">
+<var>${word}</var>
+<value>@{first_name_words}</value>
+<iter>
+<var name="${word}"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Firstname}</var>
+<arg>${Firstname}_${word}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</iter>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</for>
+<kw name="Evaluate" library="BuiltIn">
+<var>${Firstname}</var>
+<arg>"${Firstname}[1:]"</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<for flavor="IN">
+<var>${word}</var>
+<value>@{last_name_words}</value>
+<iter>
+<var name="${word}"/>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Lastname}</var>
+<arg>${Lastname}_${word}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</iter>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</for>
+<kw name="Evaluate" library="BuiltIn">
+<var>${Lastname}</var>
+<arg>"${Lastname}[1:]"</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[suffix]&quot; != &quot;&quot; and &quot;${Alldatas}[suffix]&quot; != &quot;None&quot; and &quot;${Alldatas}[suffix]&quot; != &quot; &quot;">
+<kw name="Set Variable" library="BuiltIn">
+<var>${suffix}</var>
+<arg>${Alldatas}[suffix]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${full_name}</var>
+<arg>${Firstname}_${Lastname}_${suffix}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</branch>
+<branch type="ELSE">
+<kw name="Set Variable" library="BuiltIn">
+<var>${full_name}</var>
+<arg>${Firstname}_${Lastname}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</if>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Epass_Path}</var>
+<arg>${credentials}[Default_Path]\\${full_name}${DOB}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Epass_name}</var>
+<arg>${Epass_Path}\\${full_name}${DOB}_DT.pdf</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${image}</var>
+<arg>${Epass_Path}\\${full_name}${DOB}_DT.png</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>clinic_zip_code=${Alldatas}[clinic_zip_code]\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>clinic_zip_code=${Alldatas}[clinic_zip_code]</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Firstname}</var>
+<arg>${Alldatas}[first_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Lastname}</var>
+<arg>${Alldatas}[last_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.976" endtime="20241203 15:10:05.976"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${PC_Number}</var>
+<arg>${Alldatas}[pc_number]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.991" endtime="20241203 15:10:05.991"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>dt_confirmation_number=${Alldatas}[dt_confirmation_number]</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[dt_confirmation_number]&quot; == &quot;&quot; or &quot;${Alldatas}[dt_confirmation_number]&quot; == &quot;None&quot;">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Process_Flag}</var>
+<arg>True</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</branch>
+<branch type="ELSE">
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[dt_confirmation_number]&quot; == &quot;AlreadyExists&quot; and &quot;${Alldatas}[rescheduled]&quot; == &quot;reload&quot;">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Process_Flag}</var>
+<arg>True</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</branch>
+<branch type="ELSE">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Process_Flag}</var>
+<arg>False</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</if>
+<if>
+<branch type="IF" condition="${Process_Flag} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>**************************Technician=${full_name}${DOB}**************************\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>**************************Technician=${full_name}**************************</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[process]&quot; == &quot;pre_employment&quot;">
+<kw name="Techsearch" library="Techsearch">
+<var>${Tech_found_flag}</var>
+<arg>${Alldatas}</arg>
+<arg>${credentials}</arg>
+<arg>${Log}</arg>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Tech found=${Tech_found_flag}\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Tech found=${Tech_found_flag}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</branch>
+<branch type="ELSE">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Tech_found_flag}</var>
+<arg>True</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</if>
+<if>
+<branch type="IF" condition="${Tech_found_flag} == True">
+<kw name="Get Time" library="BuiltIn">
+<var>${DT_Start_time}</var>
+<doc>Returns the given time in the requested format.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>DT_Start_time=${DT_Start_time}.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>DT_Start_time=${DT_Start_time}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET status = 'WIP' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET bgv_dt_initiated_date = '${DT_Start_time}' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:05.992"/>
+</kw>
+<kw name="Initiation" library="DT&amp;BGV_initiation">
+<var>${Duplicates_Flag}</var>
+<var>${Clinic_flag}</var>
+<var>${TechMiles}</var>
+<var>${AlreadyExists}</var>
+<arg>${Alldatas}</arg>
+<arg>${credentials}</arg>
+<arg>${Epass_Path}</arg>
+<arg>${Epass_name}</arg>
+<arg>${Log}</arg>
+<arg>${image}</arg>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:06.002"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>AlreadyExists=${AlreadyExists}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.002"/>
+</kw>
+<if>
+<branch type="IF" condition="${AlreadyExists} == True">
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[dt_confirmation_number]&quot; != &quot;AlreadyExists&quot;">
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET dt_confirmation_number = 'AlreadyExists' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.002"/>
+</kw>
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET status = NULL WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.002"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>This Tech is AlreadyExists.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.002"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>This Tech is AlreadyExists.</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.002"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${Alldatas}[hr_coordinator]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.002"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.002"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>Tech Alread exists in Infomart</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>The Tech "${full_name}" is alread exists in Infomart for "${Alldatas}[process]". Kindly check.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body1}</var>
+<arg>SSN=${Alldatas}[ssn]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${doc}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent for Tech AlreadExists.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent for Tech AlreadExists.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.008"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.008"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.008"/>
+</branch>
+<branch type="ELSE">
+<if>
+<branch type="IF" condition="${Duplicates_Flag} == False">
+<if>
+<branch type="IF" condition="${Clinic_flag} == True">
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${File_exist}</var>
+<arg>File Should Exist</arg>
+<arg>${Epass_name}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<if>
+<branch type="IF" condition="${File_exist} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Epassport Extracting.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Epassport Extracting</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Epassport_Extract" library="EpassportExtract">
+<var>${Conformation_No}</var>
+<var>${ETA_Date}</var>
+<var>${PDF_Extract}</var>
+<arg>${Alldatas}</arg>
+<arg>${Epass_name}</arg>
+<arg>${Log}</arg>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<if>
+<branch type="IF" condition="&quot;${PDF_Extract}&quot; == &quot;True&quot;">
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[tax_term]&quot; == &quot;1099&quot;">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Term}</var>
+<arg>${Alldatas}[tax_term]| ${Alldatas}[company_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</branch>
+<branch type="ELSE">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Term}</var>
+<arg>${Alldatas}[tax_term]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</if>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Message}</var>
+<arg>DT &amp; BGV &lt;b&gt;"initiated"&lt;/b&gt; for</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Teams}</var>
+<arg>Teamspass</arg>
+<arg>${Firstname}</arg>
+<arg>${Lastname}</arg>
+<arg>${Message}</arg>
+<arg>${PC_Number}</arg>
+<arg>${Term}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.008"/>
+</kw>
+<if>
+<branch type="IF" condition="${Teams} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Message sent for DT &amp; BGV initiated.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.022" endtime="20241203 15:10:06.022"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Message sent for DT &amp; BGV initiated</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.022" endtime="20241203 15:10:06.024"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Message not sent for DT &amp; BGV initiated.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Message not sent for DT &amp; BGV initiated</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.022" endtime="20241203 15:10:06.024"/>
+</if>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${Alldatas}[supplier_mail]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<arg>${Alldatas}[approver_mail],${Alldatas}[cc_recipients],${credentials}[ybotID]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${Recepients}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>${CC}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>${Recepients}\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>${CC}\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<if>
+<branch type="IF" condition="${TechMiles} &gt; 25">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>TechMiles=${TechMiles}\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body2}</var>
+<arg>*The nearest facility available for the given Zipcode (${Alldatas}[clinic_zip_code]) is ${TechMiles} miles from his current location.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</if>
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[tax_term]&quot; == &quot;1099&quot;">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>PC-${Alldatas}[pc_number]|${Alldatas}[tax_term] - ${Alldatas}[company_name]|${Alldatas}[first_name] ${Alldatas}[last_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</branch>
+<branch type="ELSE">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>PC-${Alldatas}[pc_number]|${Alldatas}[tax_term]|${Alldatas}[first_name] ${Alldatas}[last_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</if>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>DT is scheduled emailed and texted for ${Alldatas}[first_name] ${Alldatas}[last_name]. Make sure he receives it.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body1}</var>
+<arg>Confirmation Number = ${Conformation_No} &amp; This order must be completed by:${ETA_Date}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${Epass_name}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent for DT &amp; BGV initiated.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET bgv_dt_mail_sent = 'Mail Sent' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent for DT &amp; BGV initiated.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</if>
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[process]&quot; == &quot;annual_drug_test&quot; or &quot;${Alldatas}[process]&quot; == &quot;supervisor_request&quot;">
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET status = 'Initiated' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.024"/>
+</if>
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[process]&quot; == &quot;pre_employment&quot;">
+<kw name="DT&amp;BGV_Fuse_Update" library="DT&amp;BGVFuseupdate">
+<var>${FuseUpdate_Flag}</var>
+<arg>${Epass_name}</arg>
+<arg>${Alldatas}</arg>
+<arg>${credentials}</arg>
+<arg>${ETA_Date}</arg>
+<arg>${Conformation_No}</arg>
+<arg>${Log}</arg>
+<arg>${Firstname}</arg>
+<arg>${Lastname}</arg>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET status = 'Initiated' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Get Time" library="BuiltIn">
+<var>${DT_Stop time}</var>
+<doc>Returns the given time in the requested format.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>DT_Bot Stop time=${DT_Stop time}.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>DT_Bot Stop time=${DT_Stop time}</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<if>
+<branch type="IF" condition="${FuseUpdate_Flag} == False">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>DT&amp;BGV initiated not updated in Fuse.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>DT&amp;BGV initiated not updated in Fuse</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${credentials}[cox_recipients]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<if>
+<branch type="IF" condition="&quot;${Alldatas}[tax_term]&quot; == &quot;1099&quot;">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>PC-${Alldatas}[pc_number]|${Alldatas}[tax_term] - ${Alldatas}[company_name]|${Alldatas}[first_name] ${Alldatas}[last_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</branch>
+<branch type="ELSE">
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>PC-${Alldatas}[pc_number]|${Alldatas}[tax_term]|${Alldatas}[first_name] ${Alldatas}[last_name]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</if>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>DT&amp;BGV initiated not updated in Fuse for ${Alldatas}[first_name] ${Alldatas}[last_name].</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${doc}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.040"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent for DT&amp;BGV initiated not updated in Fuse.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.050" endtime="20241203 15:10:06.050"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent for DT&amp;BGV initiated not updated in Fuse.</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.050" endtime="20241203 15:10:06.050"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.050" endtime="20241203 15:10:06.050"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent for DT&amp;BGV initiated not updated in Fuse.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.050" endtime="20241203 15:10:06.050"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent for DT&amp;BGV initiated not updated in Fuse.</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.050" endtime="20241203 15:10:06.050"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.050" endtime="20241203 15:10:06.050"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.050" endtime="20241203 15:10:06.050"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.054"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.040" endtime="20241203 15:10:06.054"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.054"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.024" endtime="20241203 15:10:06.054"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.054"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Epassport extracting failed.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.054" endtime="20241203 15:10:06.054"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Epassport extracting failed</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.054" endtime="20241203 15:10:06.054"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${credentials}[cox_recipients]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>Epassport Error</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>Unable to extract the Epassport details for ${Alldatas}[first_name]_${Alldatas}[last_name]. Fuse not updated and Mail not sent for Supervisor.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${Epass_name}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET status = 'PDF_Error' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.056"/>
+</branch>
+<branch type="ELSE">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.061"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.056" endtime="20241203 15:10:06.061"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.054" endtime="20241203 15:10:06.061"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.061"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.061"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Epassport not Downloaded.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Epassport not Downloaded</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>Epassport not Downloaded - COX</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>Unable to download DT initiate Epassport for ${Alldatas}[first_name]_${Alldatas}[last_name]. Kindly check the issue.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${doc}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</branch>
+<branch type="ELSE">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.061"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.061"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Clinic not available in ZIP:${Alldatas}[zip_code] for ${Alldatas}[first_name]_${Alldatas}[last_name].\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.061"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${credentials}[cox_recipients]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>No Clinic Found - COX</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>The mentioned Zip code(${Alldatas}[zip_code]) doen't have nearby clinic, Kindly send us another Zip code to processed DT.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${doc}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent for Clinic not available.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent for Clinic not available.</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET status = 'Noclinicfound' WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent for Clinic not available.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent for Clinic not available.</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.061" endtime="20241203 15:10:06.072"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.072"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.072"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>POSSIBLE DUPLICATES for ${Alldatas}[first_name]_${Alldatas}[last_name].\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>POSSIBLE DUPLICATES</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>Epassport POSSIBLE DUPLICATES - COX</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>POSSIBLE DUPLICATES found in escreen for ${Alldatas}[first_name] ${Alldatas}[last_name]. Kindly check the issue.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${doc}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.072"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent for POSSIBLE DUPLICATES.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.085" endtime="20241203 15:10:06.085"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.085" endtime="20241203 15:10:06.085"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.085"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent for POSSIBLE DUPLICATES.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.085" endtime="20241203 15:10:06.085"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.085" endtime="20241203 15:10:06.088"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.088"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.072" endtime="20241203 15:10:06.088"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.088"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.008" endtime="20241203 15:10:06.088"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.002" endtime="20241203 15:10:06.088"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:06.088"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Technician not found.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Technician not found</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${credentials}[cox_recipients]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>Technician not found - COX</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>Technician not found in Fuse for ${Alldatas}[first_name] ${Alldatas}[last_name]. Kindly check.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${doc}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent for Tech not found.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent for Tech not found.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:06.088"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:06.088"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.992" endtime="20241203 15:10:06.088"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.088"/>
+</iter>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.088"/>
+</for>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.088"/>
+</branch>
+<branch type="ELSE">
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Infomart or Fuse Login Unsuccessful.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>Infomart or Fuse Login Unsuccessful.</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Close Browser" library="RPA.Browser.Selenium">
+<doc>Closes the current browser.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Recepients}</var>
+<arg>${credentials}[Recipient]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${CC}</var>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Subject}</var>
+<arg>Infomart or Fuse Login issue - COX</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Body}</var>
+<arg>Infomart or Fuse Login UnSuccessful. Kindly check the issue.</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${Attachment}</var>
+<arg>${doc}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Run Keyword And Return Status" library="BuiltIn">
+<var>${Mailsent}</var>
+<arg>Sendmail</arg>
+<arg>${Recepients}</arg>
+<arg>${CC}</arg>
+<arg>${Subject}</arg>
+<arg>${Body}</arg>
+<arg>${Body1}</arg>
+<arg>${Body2}</arg>
+<arg>${Attachment}</arg>
+<doc>Runs the given keyword with given arguments and returns the status as a Boolean value.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<if>
+<branch type="IF" condition="${Mailsent} == True">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail sent for Infomart or Fuse Login UnSuccessful.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.088"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.103"/>
+</branch>
+<branch type="ELSE">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Mail not sent</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>Mail not sent for Infomart or Fuse Login UnSuccessful.\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.103"/>
+</if>
+<status status="NOT RUN" starttime="20241203 15:10:06.088" endtime="20241203 15:10:06.103"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.103"/>
+</if>
+<kw name="Disconnect From Database" library="DatabaseLibrary">
+<doc>Disconnects from the database.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Kill Chrome Processes" library="Killtask">
+<doc>Kills residual Chrome driver and browser processes on Windows</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Cleanup Temp Items" library="Scope_dir">
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>@###############################Execution Completed###############################</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>@###############################Execution Completed###############################\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.103"/>
+</branch>
+<branch type="EXCEPT">
+<try>
+<branch type="TRY">
+<kw name="Execute Sql String" library="DatabaseLibrary">
+<arg>UPDATE cox_onboarding SET status = NULL WHERE SSN = '${Alldatas}[ssn]'</arg>
+<doc>Executes the ``sqlString`` as a single SQL command.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</branch>
+<branch type="EXCEPT">
+<kw name="Log To Console" library="BuiltIn">
+<arg>Alldatas not found</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</try>
+<kw name="Disconnect From Database" library="DatabaseLibrary">
+<doc>Disconnects from the database.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Append To File" library="OperatingSystem">
+<arg>${Log}</arg>
+<arg>-----------------Execution failed-----------------\n</arg>
+<doc>Appends the given content to the specified file.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>-----------------Execution failed-----------------</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<status status="NOT RUN" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</branch>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.103"/>
+</try>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.103"/>
+</iter>
+<status status="NOT RUN" starttime="20241203 15:10:05.960" endtime="20241203 15:10:06.103"/>
+</for>
+<kw name="Disconnect From Database" library="DatabaseLibrary">
+<doc>Disconnects from the database.</doc>
+<msg timestamp="20241203 15:10:06.103" level="INFO">Executing : Disconnect From Database</msg>
+<status status="PASS" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<kw name="Log To Console" library="BuiltIn">
+<arg>DB Disconnected</arg>
+<doc>Logs the given message to the console.</doc>
+<status status="PASS" starttime="20241203 15:10:06.103" endtime="20241203 15:10:06.103"/>
+</kw>
+<status status="PASS" starttime="20241203 15:10:05.875" endtime="20241203 15:10:06.103"/>
+</kw>
+<status status="PASS" starttime="20241203 15:10:05.865" endtime="20241203 15:10:06.103"/>
+</test>
+<doc>COX_Onboarding Process-COX_DT_BGV_Initiating</doc>
+<status status="PASS" starttime="20241203 15:10:01.694" endtime="20241203 15:10:06.120"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tasks</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="COX BGV DT Initiation Main">COX BGV DT Initiation Main</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20241203 15:10:04.368" level="WARN">Environment variable `RC_JAVA_ACCESS_BRIDGE_DLL` needs to be set to absolute path of `WindowsAccessBridge-64.dll`</msg>
+</errors>
+</robot>
